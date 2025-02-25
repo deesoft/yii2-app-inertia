@@ -1,0 +1,45 @@
+{
+    "name": "deesoft/yii2-app-inertia",
+    "description": "Yii 2 Inertia Project Template",
+    "keywords": ["yii2", "framework", "inertiajs", "project template"],
+    "homepage": "http://www.yiiframework.com/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/deesoft/yii2-app-inertia/issues?state=open",
+        "forum": "http://www.yiiframework.com/forum/",
+        "wiki": "http://www.yiiframework.com/wiki/",
+        "irc": "irc://irc.freenode.net/yii",
+        "source": "https://github.com/yiisoft/yii2"
+    },
+    "minimum-stability": "dev",
+    "replace": {
+        "ezyang/htmlpurifier": "*",
+        "bower-asset/punycode": "*",
+        "bower-asset/yii2-pjax": "*"
+    },
+    "require": {
+        "php": ">=7.1",
+        "yiisoft/yii2": "~2.0.50",
+        "yiisoft/yii2-imagine": "^2.3",
+        "deesoft/yii2-inertia": "*"
+    },
+    "require-dev": {
+        "deesoft/yii2-gii": "dev-master"
+    },
+    "config": {
+        "process-timeout": 1800,
+        "fxp-asset": {
+            "enabled": false
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}

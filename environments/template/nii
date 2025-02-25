@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const ROOT_PATH = dirname(__filename);
+
+const REGEX = /^--([\w-]+)(?:=(.*))?$/;
+const ENV_REGEX = /^ENV_([\w-]+)$/;
+const CMD_PATH = path.join(ROOT_PATH, 'app/commands/cmds');
+
+global.configs = {};
+global.CMD_PATH = CMD_PATH;
+global.ROOT_PATH = ROOT_PATH;
+dotenv.config({ path: ROOT_PATH + '/.env' });
+
+function extractParams() {
+    const _args = process.argv.slice(2),
+        file = _args.shift(),
+        f1 = path.join(CMD_PATH, `${file}.js`),
+        f2 = path.join(CMD_PATH, `${file}-local.js`),
+        cmd_file = fs.existsSync(f2) ? f2 : (fs.existsSync(f1) ? f1 : null);
+    let params = [];
+    _args.forEach(arg => {
+        let matchs = arg.match(REGEX);
+        if (matchs) {
+            let v = (typeof matchs[2] === 'undefined') ? true : matchs[2];
+            let env_matchs = matchs[1].match(ENV_REGEX);
+            if (env_matchs) {
+                process.env[env_matchs[1]] = v;
+            } else {
+                configs[matchs[1]] = v;
+                configs[id2camel(matchs[1])] = v;
+            }
+        } else {
+            params.push(arg);
+        }
+    });
+    return {cmd_file, params};
+}
+
+function id2camel(str) {
+    let result = str.replace(/\b[a-z]/g, c => c.toUpperCase()).replace(/[^\w]/g, '');
+    return `${result[0].toLowerCase()}${result.slice(1)}`;
+}
+
+(async function run() {
+    const {cmd_file, params} = extractParams();
+    if (cmd_file) {
+        const { default: func } = await import(cmd_file);
+        if (func && func instanceof Function) {
+            func.apply(null, params);
+        }
+    }
+})();
