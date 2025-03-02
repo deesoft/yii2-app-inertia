@@ -12,7 +12,6 @@ use yii\base\Model;
 class ResetPassword extends Model
 {
     public $password;
-    public $retype_password;
     /**
      * @var Auth
      */
@@ -46,9 +45,8 @@ class ResetPassword extends Model
     public function rules()
     {
         return [
-            [['password', 'retype_password'], 'required'],
+            [['password',], 'required'],
             ['password', 'string', 'min' => 6],
-            ['retype_password', 'compare', 'compareAttribute' => 'password']
         ];
     }
 
@@ -61,7 +59,8 @@ class ResetPassword extends Model
     {
         if ($this->validate()) {
             $user = $this->_user;
-            $user->password = bcrypt($this->password);
+            $user->setPassword($this->password);
+            $user->password_reset_token = null;
 
             return $user->save(false);
         }

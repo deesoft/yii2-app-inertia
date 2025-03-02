@@ -1,13 +1,13 @@
 import { stringify, parse } from "qs";
 import { router } from "@inertiajs/vue3";
+export const {toUrl} = window;
 
-if(typeof window.stringify === 'undefined'){
+if (typeof window.stringify === 'undefined') {
     window.stringify = stringify;
 }
 
-export const toUrl = window.toUrl;
 export const URL = reactive({
-    home:computed(()=>window.toUrl('')),
+    home: computed(() => toUrl.home),
     current: computed(() => usePage().url),
     path: computed(() => usePage().url.split('?')[0]),
     queryParams: computed(() => {
@@ -22,7 +22,7 @@ export const URL = reactive({
      * @returns 
      */
     to(path, params, method) {
-        return window.toUrl(path, params, method);
+        return toUrl(path, params, method);
     },
     /**
      * 
@@ -38,14 +38,10 @@ export const URL = reactive({
         return window.history.back();
     },
     remote(v, format) {
-        const REGEX = /^[a-z0-9]{1,16}$/
+        const REGEX = /^[a-z0-9]{1,16}$/;
         if (REGEX.test(v)) {
-            return '@base/file/' + v + (format ? '/' + format : '')
+            return toUrl('file/view', { id: v }) + (format ? '/' + format : '');
         }
-        return v
+        return v;
     }
 });
-
-export function route(path, params, method) {
-    return window.toUrl(path, params, method);
-}

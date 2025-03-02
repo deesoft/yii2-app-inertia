@@ -5,10 +5,10 @@ Aplikasi ini memerlukan PHP versi 7.1 atau yang lebih tinggi, juga nodejs versi 
 `composer` juga diperlukan untuk menginstall dependensi yang diperlukan.
 
 ## Installation
-Dengan menggunakan `composer`, jalankan perintah berikut:
+Download source code aplikasi dengan perintah berikut:
 
 ```
-#composer create-project  deesoft/yii2-app-inertia yii-app
+#git clone https://github.com/deesoft/yii2-app-inertia.git yii-app
 #cd yii-app
 #php init
 ```

@@ -1,6 +1,4 @@
 <?php
-
-
 $config = [
     'id' => 'basic',
     'name' => 'main',
@@ -8,14 +6,10 @@ $config = [
     'components' => [
         'request' => [
             'cookieValidationKey' => env('COOKIE_VALIDATION_KEY'),
-            'parsers' => [
-                'application/json' => 'yii\web\JsonParser',
-                'multipart/form-data' => 'yii\web\MultipartFormDataParser'
-            ],
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName' => false,
+            'showScriptName' => true,
             //'enableStrictParsing' => true,
             'rules' => require(__DIR__ . '/routes.php'),
         ],
@@ -27,19 +21,23 @@ $config = [
             'identityClass' => 'app\models\Auth',
             'enableAutoLogin' => true,
             'enableSession' => true,
-            'loginUrl' => ['site/login'],
+            'loginUrl' => ['/auth/login'],
         ],
     ],
     'as access' => [
         'class' => app\classes\AccessControl::class,
+        'allowed' => [
+            '/*', // remark bagian ini setelah user role tersedia.
+        ],
+        'menus' => __DIR__ . '/menu.php',
         'except' => [
             'file/*',
             'gii/*',
-            //'*',
+        //'*', //
         ],
     ],
     'params' => [
-        'inertia' =>[
+        'inertia' => [
             'encript_history' => true,
             'viewFile' => '@app/views/app.php',
         ]
@@ -48,7 +46,6 @@ $config = [
 
 if (YII_IS_LOCAL) {
     // configuration adjustments for 'dev' environment
-      
 }
 
 return $config;

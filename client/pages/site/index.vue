@@ -6,6 +6,9 @@
                     <Link href="/" class="text-decoration-none"><v-icon>mdi-home</v-icon></Link> / Dashboard
                 </p>
             </v-col>
+            <v-col cols="12">
+                
+            </v-col>
         </v-row>
     </v-container>
 </template>

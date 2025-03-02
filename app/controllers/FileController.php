@@ -5,7 +5,6 @@ namespace app\controllers;
 use app\classes\Controller;
 use app\models\File;
 use Yii;
-use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
@@ -73,7 +72,7 @@ class FileController extends Controller
             ]);
         }
 
-        $content = stream_get_contents($model->content);
+        $content = is_resource($model->content) ? stream_get_contents($model->content) : $model->content;
         return Yii::$app->response->sendContentAsFile($content, $model->name, [
                 'inline' => true,
                 'mimeType' => $model->type,
@@ -102,15 +101,15 @@ class FileController extends Controller
      */
     public function actionUpload($type = null)
     {
+        $this->response->format = 'json';
         Yii::$app->getRequest()->getBodyParams();
         $file = UploadedFile::getInstanceByName('file');
         $model = File::store($file, $type);
-        if (!$model->hasErrors()) {
-            $response = Yii::$app->getResponse();
-            $response->setStatusCode(201);
+        if ($model->hasErrors()) {
+            $this->response->setStatusCode(422, 'Data Validation Failed.');
+            return $model->firstErrors;
         }
-
-        return $model;
+        return $model->toArray();
     }
 
     public function actionDelete($id)

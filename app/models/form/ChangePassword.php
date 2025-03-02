@@ -14,9 +14,8 @@ use yii\base\Model;
  */
 class ChangePassword extends Model
 {
-    public $oldPassword;
-    public $newPassword;
-    public $retypePassword;
+    public $password;
+    public $new_password;
 
     /**
      * @inheritdoc
@@ -24,10 +23,9 @@ class ChangePassword extends Model
     public function rules()
     {
         return [
-            [['oldPassword', 'newPassword', 'retypePassword'], 'required'],
-            [['oldPassword'], 'validatePassword'],
-            [['newPassword'], 'string', 'min' => 6],
-            [['retypePassword'], 'compare', 'compareAttribute' => 'newPassword'],
+            [['password', 'new_password'], 'required'],
+            [['password'], 'validatePassword'],
+            [['new_password'], 'string', 'min' => 6],
         ];
     }
 
@@ -39,8 +37,8 @@ class ChangePassword extends Model
     {
         /* @var $user Auth */
         $user = Yii::$app->user->identity;
-        if (!$user || !$user->validatePassword($this->oldPassword)) {
-            $this->addError('oldPassword', 'Incorrect old password.');
+        if (!$user || !$user->validatePassword($this->password)) {
+            $this->addError('password', 'Incorrect old password.');
         }
     }
 
@@ -54,7 +52,7 @@ class ChangePassword extends Model
         if ($this->validate()) {
             /* @var $user Auth */
             $user = Yii::$app->user->identity;
-            $user->setPassword($this->newPassword);
+            $user->setPassword($this->new_password);
             $user->generateAuthKey();
             if ($user->save()) {
                 return true;

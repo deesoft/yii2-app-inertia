@@ -6,12 +6,13 @@ use app\classes\ActiveRecord;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\Query;
+use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "user".
  *
  * @property int $id
+ * @property string $username
  * @property string $password_hash
  * @property string|null $password_reset_token
  * @property string $email
@@ -19,13 +20,13 @@ use yii\db\Query;
  * @property string|null $fullname
  * @property bool $active
  * @property string|null $avatar
+ * @property string $initial 
  * @property int $status
  * @property string|null $created_at
  * @property int|null $created_by
  * @property string|null $updated_at
  * @property int|null $updated_by
  *
- * @property string|null $avatarLink 
  * @property OpenAuth[] $openAuths
  */
 class User extends ActiveRecord
@@ -86,6 +87,20 @@ class User extends ActiveRecord
     }
 
     /**
+     * @return string
+     */
+    public function getInitial()
+    {
+        $words = Inflector::camelize($this->fullname ? $this->fullname : $this->username);
+        $words = explode(' ', Inflector::camel2words($words));
+        $result = '';
+        foreach ($words as $word) {
+            $result .= substr($word, 0, 1);
+        }
+        return substr($result, 0, 2);
+    }
+
+    /**
      * @inheritdoc
      */
     public function behaviors()
@@ -105,6 +120,7 @@ class User extends ActiveRecord
             'phone',
             'fullname',
             'avatar',
+            'initial',
         ];
     }
 

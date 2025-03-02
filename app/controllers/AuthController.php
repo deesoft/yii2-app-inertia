@@ -2,13 +2,16 @@
 
 namespace app\controllers;
 
-use app\helpers\Access;
-use app\helpers\Route;
-use stdClass;
+use app\models\File;
+use app\models\form\ChangePassword;
+use app\models\form\Login;
+use app\models\form\PasswordResetRequest;
+use app\models\form\ResetPassword;
+use app\models\form\UserSignup;
+use dee\inertia\Inertia;
 use Yii;
-use yii\db\Query;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 /**
  * 
@@ -17,38 +20,111 @@ use yii\web\Controller;
 class AuthController extends Controller
 {
 
-    public function actionUserInfo()
+    /**
+     * {@inheritDoc}
+     */
+    public function verbs()
     {
-        Route::refreshRoute();
-        $identity = Yii::$app->user->identity;
+        return [
+            'logout' => ['POST'],
+            'edit-avatar' => ['POST'],
+        ];
+    }
 
-        if ($identity) {
-            $branchs = (new Query())
-                ->select(['b.id', 'b.code', 'b.name', 'title' => "concat(b.code,' - ', b.name)"])
-                ->from('branch b')
-                ->innerJoin('user_branch ub', 'ub.branch_id=b.id')
-                ->where(['ub.user_id' => $identity->id])
-                ->all();
-        } else {
-            $branchs = [];
-        }
-        $bIds = ArrayHelper::getColumn($branchs, 'id');
-        $warehouses = [];
-        $whs = (new Query())
-            ->select(['w.id', 'w.code', 'w.name', 'title' => "concat(w.code,' - ', w.name)", 'w.branch_id'])
-            ->from('warehouse w')
-            ->where(['w.branch_id' => $bIds])
-            ->all();
-        foreach ($whs as $row) {
-            $warehouses[$row['branch_id']][] = $row;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    protected function accessControls()
+    {
+        return [
+            'logout' => ['@'],
+            'profile' => ['@'],
+            'change-password' => ['@'],
+            'edit-avatar' => ['@'],
+        ];
+    }
 
-        return $this->asJson([
-                'isLoged' => !!$identity,
-                'auth' => $identity ?: new stdClass(),
-                'menus' => Access::getAssignedMenu(),
-                'branches' => $branchs,
-                'warehouses' => $warehouses ?: new stdClass(),
+    public function actionProfile()
+    {
+        return Inertia::render('auth/profile', ['user' => \Yii::$app->user->identity]);
+    }
+
+    public function actionLogin()
+    {
+        if (!Yii::$app->user->getIsGuest()) {
+            return $this->goHome();
+        }
+        $model = new Login();
+        if ($model->load($this->request->post(), '') && $model->login()) {
+            $url = Yii::$app->user->getReturnUrl(['/site/index']);
+            return Inertia::location($url);
+        }
+        return Inertia::render('auth/login', ['model' => $model]);
+    }
+
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+        return Inertia::location(['/site/index']);
+    }
+
+    public function actionChangePassword()
+    {
+        $model = new ChangePassword();
+        if ($model->load($this->request->post(), '') && $model->change()) {
+            return $this->redirect(['/site/index']);
+        }
+        return Inertia::render('auth/change-password', [
+                'model' => $model,
         ]);
+    }
+
+    public function actionRegister()
+    {
+        $model = new UserSignup();
+        if ($model->load($this->request->post(), '') && $model->signup()) {
+            return $this->redirect(['/auth/login']);
+        }
+        return Inertia::render('auth/register', [
+                'model' => $model,
+        ]);
+    }
+
+    public function actionResetPassword($token)
+    {
+        $model = new ResetPassword($token);
+        if ($model->load($this->request->post(), '') && $model->resetPassword()) {
+            return $this->redirect(['/auth/login']);
+        }
+        return Inertia::render('auth/reset-password', [
+                'model' => $model,
+        ]);
+    }
+
+    public function actionPasswordResetRequest()
+    {
+        $model = new PasswordResetRequest();
+        if ($model->load($this->request->post(), '') && $model->sendEmail()) {
+            return $this->redirect(['/site/index']);
+        }
+        return Inertia::render('auth/password-reset-request', [
+                'model' => $model,
+        ]);
+    }
+
+    public function actionEditAvatar()
+    {
+        $this->response->format = 'json';
+        Yii::$app->getRequest()->getBodyParams();
+        $file = UploadedFile::getInstanceByName('file');
+        $model = File::store($file);
+        if ($model->hasErrors()) {
+            $this->response->setStatusCode(422, 'Data Validation Failed.');
+            return $model->firstErrors;
+        }
+        $user = Yii::$app->user->identity;
+        $user->avatar = $model->id;
+        $user->save();
+        return $user->toArray();
     }
 }

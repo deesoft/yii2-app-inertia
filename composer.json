@@ -13,6 +13,7 @@
         "source": "https://github.com/yiisoft/yii2"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "replace": {
         "ezyang/htmlpurifier": "*",
         "bower-asset/punycode": "*",
@@ -20,9 +21,11 @@
     },
     "require": {
         "php": ">=7.1",
+        "deesoft/yii2-inertia": "*",
         "yiisoft/yii2": "~2.0.50",
         "yiisoft/yii2-imagine": "^2.3",
-        "deesoft/yii2-inertia": "*"
+        "yiisoft/yii2-queue": "^2.3",
+        "yiisoft/yii2-symfonymailer": "~3.0"
     },
     "require-dev": {
         "deesoft/yii2-gii": "dev-master"

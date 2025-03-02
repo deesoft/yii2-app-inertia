@@ -46,7 +46,7 @@
     </v-dialog>
 </template>
 <script setup>
-import { URL } from '@/composables/url';
+const {toUrl} = window;
 
 const state = reactive({
     show: false,
@@ -65,7 +65,7 @@ const right = reactive({
 });
 
 function open(name) {
-    axios.get(URL.to('/admin/role/data', { name })).then(r => {
+    axios.get(toUrl('/admin/role/data', { name })).then(r => {
         state.name = name;
         left.search = '';
         left.selected = [];
@@ -80,7 +80,7 @@ function open(name) {
 }
 
 function doSave(action) {
-    let url = URL.to(`/admin/role/${action}`, { name: state.name });
+    let url = toUrl.post(`/admin/role/${action}`, { name: state.name });
     const items = action == 'assign' ? left.selected : right.selected;
     if (items.length > 0) {
         axios.post(url, { items }).then(r => {

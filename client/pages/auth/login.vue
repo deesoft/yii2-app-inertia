@@ -1,5 +1,6 @@
 <script setup>
 import MainLayout from '@/layouts/Main.vue';
+const { toUrl } = window;
 const props = defineProps({
     model: Object,
 });
@@ -19,16 +20,16 @@ defineOptions({
 <template>
     <div class="bg-grey-lighten-3">
         <v-container class="d-flex" style="min-height:100vh">
-            <v-icon style="position:absolute" @click="URL.back()">mdi-arrow-left</v-icon>
             <v-row class="d-flex align-center">
                 <v-col class="d-flex align-center justify-center pa-4">
                     <v-card class="align-center" style="min-width:320px">
                         <v-card-text>
-                            <Link :href="toUrl('')"><v-img height="40" src="/icon/icon.jpeg"></v-img></Link>
+                            <Link :href="toUrl.home"><v-img height="40" :src="toUrl.public('icon/icon.jpeg')"></v-img>
+                            </Link>
                             <h4 class="text-center text-h6">Masuk Akun</h4>
                         </v-card-text>
                         <v-card-text>
-                            <form @submit.prevent="form.post(toUrl('site/login'))" class="space-y-6">
+                            <form @submit.prevent="form.post($page.url)" class="space-y-6">
                                 <v-text-field v-model="form.username" required density="compact" clearable
                                     label="Username" variant="outlined">
                                 </v-text-field>
@@ -41,7 +42,7 @@ defineOptions({
                                 <v-row no-gutters>
                                     <v-col order="last" class="pt-1 text-right mb-3">
                                         <Link :href="toUrl('/auth/forgot-password')">
-                                            <span class="text-sm text-blue-600 hover:underline">Lupa Password?</span>
+                                        <span class="text-sm text-blue-600 hover:underline">Lupa Password?</span>
                                         </Link>
                                     </v-col>
                                 </v-row>
@@ -50,6 +51,13 @@ defineOptions({
                                         :loading="form.processing">Login</v-btn>
                                 </div>
                             </form>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">
+                                Kamu belum mempunyai akun ?
+                                <Link :href="toUrl('/auth/register')" class="text-decoration-none">
+                                <v-chip style="cursor:pointer" color="green"><span
+                                        class="text-blue-600 hover:underline">Daftar Sekarang</span></v-chip>
+                                </Link>
+                            </div>
                         </v-card-text>
                     </v-card>
                 </v-col>

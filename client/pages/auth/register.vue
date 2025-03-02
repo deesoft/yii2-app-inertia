@@ -1,58 +1,25 @@
 <script setup>
 import MainLayout from '@/layouts/Main.vue';
-
-const router = useRouter()
-const data = reactive({
-    fm: {
-        username: null,
-        email: null,
-        phone: null,
-        password: null,
-        password_confir: null,
-    },
-    errors: {
-        password: [],
-        password_confirm: [],
-    },
+const {toUrl} = window;
+const props = defineProps({
+    model: Object,
+});
+const form = useForm({
+    username: props.model.username,
+    password: props.model.password,
+    email: props.model.email,
+    phone: props.model.email,
+});
+const state = reactive({
     show_pass: false,
     show_pass_confirm: false,
-    loading: false,
-    policy: false
-})
+    policy: false,
+    password_confirm: null,
+});
 
-const submit = () => {
-    Object.keys(data.errors).forEach(key => { data.errors[key] = [] })
-    data.loading = true
-
-    if (data.fm.password != data.fm.password_confirm) {
-        data.errors.password_confirm.push('Password Confirmation Not Match')
-        return;
-    }
-
-    $axios('api/auth/signup', {
-        method: 'POST',
-        body: {
-            username: data.fm.username,
-            email: data.fm.email,
-            phone: data.fm.phone,
-            password: data.fm.password
-        }
-    }).then((res) => {
-        data.loading = false
-        auth.login(res.token, res)
-        appTrigger('show-snackbar', { message: 'Signup succesfully, redirect ...' })
-        router.replace('/login')
-    }).catch((e) => {
-        data.loading = false
-        appTrigger('show-snackbar', { message: e, color: 'error' })
-        if (Array.isArray(e.response._data)) {
-            e.response._data.forEach((item) => {
-                data.errors[item.field].push(item.message)
-            })
-        }
-    })
-}
-
+const password_confirm_error = computed(() => {
+    return form.password == state.password_confirm ? '' : 'Password confirm not match';
+});
 
 defineOptions({
     layout: MainLayout,
@@ -60,67 +27,66 @@ defineOptions({
 </script>
 
 <template>
-    <v-container class="d-flex" style="min-height:100vh">
-        <v-icon style="position:absolute" @click="$router.back()">mdi-arrow-left</v-icon>
-        <v-row class="d-flex align-center">
-            <v-col cols="6" v-if="!$vuetify.display.mobile" class="text-center">
-                <router-link to="/" class="text-decoration-none">
-                    <v-img style="max-width:200px" class="mx-auto mb-3" :aspect-ratio="1"
-                        src="/icon/logo-splash.png"></v-img>
-                </router-link>
-                <p class="text-center text-subtitle">Belanjar Grosir Murah hanya di grosirland.id</p>
+    <div class="bg-grey-lighten-3">
+        <v-container class="d-flex" style="min-height:100vh">
+            <v-row class="d-flex align-center">
+                <v-col class="d-flex align-center justify-center">
+                    <v-card flat class="align-center" style="min-width:320px">
+                        <v-card-text class="text-center">
+                            <Link :href="toUrl.home"><v-img height="40" :src="toUrl.public('icon/icon.jpeg')"></v-img></Link>
+                            <h1 class="mb-4">Daftar Sekarang</h1>
+                            <p>Sudah punya akun ? <Link :href="toUrl('/site/login')">Masuk</Link></p>
+                        </v-card-text>
+                        <v-card-text>
+                            <form @submit.prevent="form.submit($page.url)">
+                                <v-text-field v-model="form.username" required density="compact" label="Username"
+                                    variant="outlined" :error-messages="form.errors.username"
+                                    @input="form.clearErrors('username')">
+                                </v-text-field>
 
-            </v-col>
-            <v-col class="d-flex align-center justify-center">
-                <v-card flat class="align-center" style="min-width:320px">
-                    <v-card-text class="text-center">
-                        <h1 class="mb-4">Daftar Sekarang</h1>
-                        <p>Sudah punya akun ? <router-link to="/login">Masuk</router-link></p>
-                    </v-card-text>
-                    <v-card-text>
-                        <form @submit.prevent="submit()">
-                            <v-text-field v-model="data.fm.username" required density="compact" label="Username"
-                                variant="outlined">
-                            </v-text-field>
+                                <v-text-field type="email" v-model="form.email" required density="compact" label="Email"
+                                    variant="outlined" :error-messages="form.errors.email"
+                                    @input="form.clearErrors('email')">
+                                </v-text-field>
 
-                            <v-text-field type="email" v-model="data.fm.email" required density="compact" label="Email"
-                                variant="outlined">
-                            </v-text-field>
+                                <v-text-field type="phone" v-model="form.phone" density="compact" label="Phone"
+                                    variant="outlined" :error-messages="form.errors.phone"
+                                    @input="form.clearErrors('phone')">
+                                </v-text-field>
 
-                            <v-text-field type="phone" v-model="data.fm.phone" density="compact" label="Phone"
-                                variant="outlined">
-                            </v-text-field>
+                                <v-text-field v-model="form.password" required density="compact" label="Password"
+                                    :type="state.show_pass ? 'text' : 'password'" variant="outlined" autocomplete="on"
+                                    :append-inner-icon="state.show_pass ? 'mdi-eye-off' : 'mdi-eye'"
+                                    :error-messages="form.errors.password"
+                                    @click:append-inner="state.show_pass = !state.show_pass"
+                                    @input="form.clearErrors('password')">
+                                </v-text-field>
 
-                            <v-text-field v-model="data.fm.password" required density="compact" label="Password"
-                                :type="data.show_pass ? 'text' : 'password'" variant="outlined" autocomplete="on"
-                                :append-inner-icon="data.show_pass ? 'mdi-eye-off' : 'mdi-eye'"
-                                @click:append-inner="data.show_pass = !data.show_pass">
-                            </v-text-field>
+                                <v-text-field v-model="form.password_confirm" required density="compact"
+                                    label="Password Confirmation" :type="state.show_pass_confirm ? 'text' : 'password'"
+                                    variant="outlined" autocomplete="on" :error-messages="password_confirm_error"
+                                    :append-inner-icon="state.show_pass_confirm ? 'mdi-eye-off' : 'mdi-eye'"
+                                    @click:append-inner="state.show_pass_confirm = !state.show_pass_confirm">
+                                </v-text-field>
 
-                            <v-text-field v-model="data.fm.password_confirm" required density="compact"
-                                label="Password Confirmation" :type="data.show_pass_confirm ? 'text' : 'password'"
-                                variant="outlined" autocomplete="on" :error-messages="data.errors.password_confirm"
-                                :append-inner-icon="data.show_pass_confirm ? 'mdi-eye-off' : 'mdi-eye'"
-                                @click:append-inner="data.show_pass_confirm = !data.show_pass_confirm">
-                            </v-text-field>
-
-                            <input type="checkbox" v-model="data.policy" class="mr-0 pr-0" />
-                            <label class="pt-4">
-                                I accept the
-                                <a href="/policy" target="_blank" class="text-sm text-blue-600 hover:underline">Terms
-                                    and Conditions</a>
-                            </label>
-                            <div class="my-3">
-                                <v-btn type="submit" :loading="data.loading" color="primary" block
-                                    :disabled="!data.policy">
-                                    Register
-                                </v-btn>
-                            </div>
-                        </form>
-
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
-    </v-container>
+                                <input type="checkbox" v-model="state.policy" class="mr-0 pr-0" />
+                                <label class="pt-4">
+                                    I accept the
+                                    <a href="/policy" target="_blank"
+                                        class="text-sm text-blue-600 hover:underline">Terms
+                                        and Conditions</a>
+                                </label>
+                                <div class="my-3">
+                                    <v-btn type="submit" :loading="state.loading" color="primary" block
+                                        :disabled="!state.policy && !!password_confirm_error">
+                                        Register
+                                    </v-btn>
+                                </div>
+                            </form>
+                        </v-card-text>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
 </template>

@@ -77,7 +77,4 @@ function open(options, callbackTrue, callbackFalse) {
 onMounted(() => {
     applyDialog('confirm', open);
 });
-defineExpose({
-    open
-});
 </script>

@@ -46,7 +46,9 @@
     </v-dialog>
 </template>
 <script setup>
+import { URL } from '@/composables/url';
 
+const { toUrl } = window;
 const state = reactive({
     show: false,
     passwordOpen: false,
@@ -82,10 +84,10 @@ function open(row) {
 }
 
 function save() {
-    let url = state.id ? toUrl('/admin/user/update', { id: state.id }) : '/admin/user/create';
+    let url = state.id ? toUrl.post('/admin/user/update', { id: state.id }) : toUrl.post('/admin/user/create');
     axios.post(url, form.data()).then(r => {
         state.show = false;
-        reloadPage();
+        URL.reload();
     }).catch(error => {
         form.setError(error.response.data);
     });

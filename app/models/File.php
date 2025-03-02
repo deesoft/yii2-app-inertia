@@ -10,7 +10,6 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\FileHelper;
 use yii\helpers\StringHelper;
-use yii\helpers\Url;
 use yii\imagine\Image;
 use yii\web\ServerErrorHttpException;
 use yii\web\UploadedFile;
@@ -18,11 +17,10 @@ use yii\web\UploadedFile;
 /**
  * This is the model class for table "file".
  *
- * @property int $id
+ * @property string $id
  * @property string|null $type mime type
  * @property string|null $name original name
  * @property resource|null $content
- * @property string $url
  * @property int|null $created_at
  * @property int|null $created_by
  * @property int|null $updated_at
@@ -88,25 +86,6 @@ class File extends ActiveRecord
         return $filename;
     }
 
-    /**
-     *
-     * @param int $width
-     * @param int $height
-     * @return string
-     */
-    public function getUrl($width = null, $height = null)
-    {
-        $url = Url::base(true) . "/file/{$this->id}";
-        if ($width && $height) {
-            return "$url/{$width}x{$height}";
-        } elseif ($width) {
-            return "$url/w{$width}";
-        } elseif ($height) {
-            return "$url/h{$height}";
-        }
-        return $url;
-    }
-
     public static function getDb()
     {
         return Yii::$app->dbFile;
@@ -154,17 +133,6 @@ class File extends ActiveRecord
         return $model;
     }
 
-    public static function resolveLink($value)
-    {
-        if(is_array($value)){
-            return array_map([static::class, 'resolveLink'], $value);
-        }
-        if (preg_match('/^[a-z0-9]{1,16}$/', $value)) {
-            return Url::base(true) . "/file/{$value}";
-        }
-        return $value;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -185,7 +153,6 @@ class File extends ActiveRecord
     public function fields()
     {
         $fields = parent::fields();
-        $fields['url'] = 'url';
         unset($fields['content']);
         return $fields;
     }

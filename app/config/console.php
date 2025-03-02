@@ -1,23 +1,10 @@
 <?php
 $config = [
     'id' => 'basic-console',
+    'bootstrap' => ['queue'],
     'controllerNamespace' => 'app\commands',
     'components' => [
-        'urlManager' => [
-            'baseUrl' => env('BASE_URL', ''),
-            'hostInfo' => env('HOST_INFO', 'http://localhost'),
-            'scriptUrl' => env('SCRIPT_URL', '/index.php'),
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => require(__DIR__ . '/routes.php'),
-        ],
-        'user' => [
-            'class' => 'yii\web\User',
-            'identityClass' => 'app\models\Auth',
-            'enableAutoLogin' => false,
-            'enableSession' => false,
-            'loginUrl' => ['site/login'],
-        ],
+        
     ],
     
 ];

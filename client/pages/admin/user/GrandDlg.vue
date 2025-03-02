@@ -46,6 +46,7 @@
     </v-dialog>
 </template>
 <script setup>
+const { toUrl } = window;
 
 const state = reactive({
     show: false,
@@ -65,7 +66,7 @@ const right = reactive({
 });
 
 function open(row) {
-    axios.get(toUrl('/admin/user/data', { id:row.id })).then(r => {
+    axios.get(toUrl('/admin/user/data', { id: row.id })).then(r => {
         state.id = row.id;
         state.username = row.username;
         left.search = '';
@@ -81,7 +82,7 @@ function open(row) {
 }
 
 function doSave(action) {
-    let url = toUrl(`/admin/user/${action}`, { id: state.id });
+    let url = toUrl.post(`/admin/user/${action}`, { id: state.id });
     const items = action == 'assign' ? left.selected : right.selected;
     if (items.length > 0) {
         axios.post(url, { items }).then(r => {

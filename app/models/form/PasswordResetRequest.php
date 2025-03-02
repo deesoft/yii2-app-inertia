@@ -3,6 +3,7 @@
 namespace app\models\form;
 
 use app\models\Auth;
+use app\system\queue\EmailResetPassword;
 use Yii;
 use yii\base\Model;
 use yii\helpers\Url;
@@ -47,14 +48,11 @@ class PasswordResetRequest extends Model
             }
 
             if ($user->save()) {
-                $resetLink = Url::to(['user/reset-password', 'token' => $user->password_reset_token], true);
-                return Yii::$app->mailer->compose([
-                            'html' => 'passwordResetToken-html',
-                            'text' => 'passwordResetToken-text'], ['user' => $user, 'resetLink' => $resetLink])
-                        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
-                        ->setTo($this->email)
-                        ->setSubject('Password reset for ' . Yii::$app->name)
-                        ->send();
+                $resetLink = Url::to(['/auth/reset-password', 'token' => $user->password_reset_token], true);
+                Yii::$app->queue->push(new EmailResetPassword([
+                    'resetLink' => $resetLink,
+                    'userId' => $user->id,
+                ]));
             }
         }
 

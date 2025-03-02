@@ -13,7 +13,7 @@ export const darkMode = computed({
 const dialogMethods = reactive({
     confirm: null,
     uploadImage: null,
-    toast: null,
+    uploadFile: null,
 });
 
 export function applyDialog(name, method) {
@@ -24,9 +24,9 @@ export function applyDialog(name, method) {
         case 'uploadImage':
             dialogMethods.uploadImage = method;
             break;
-        case 'toast':
-            dialogMethods.toast = method;
-            break;
+            case 'uploadFile':
+                dialogMethods.uploadFile = method;
+                break;
     }
 }
 
@@ -59,8 +59,11 @@ export function uploadImage(options) {
     });
 }
 
-export function showSnackbar(options) {
-    if (dialogMethods.toast) {
-        dialogMethods.toast(options);
+export function uploadFile(options) {
+    if (dialogMethods.uploadFile) {
+        return dialogMethods.uploadFile(options);
     }
+    return new Promise((resolve) => {
+        resolve(false);
+    });
 }

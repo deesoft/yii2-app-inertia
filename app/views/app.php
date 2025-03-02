@@ -1,6 +1,5 @@
 <?php
 
-use app\helpers\Access;
 use dee\inertia\ViteAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -16,7 +15,9 @@ $baseUrl = Url::base(true);
 $this->registerCssFile('https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css');
 
 ViteAsset::register($this);
-$this->registerJsVar('menus', Access::getAssignedMenu());
+$user = Yii::$app->user->identity;
+$this->registerJsVar('user', $user ? $user->toArray() : ['id' => null]);
+$this->registerJsVar('menus', Yii::$app->assignedMenu);
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/png', 'href' => "$baseUrl/icon/icon.jpeg"]);
 ?>
 <?php $this->beginPage(); ?>

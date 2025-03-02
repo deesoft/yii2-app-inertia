@@ -34,7 +34,7 @@
 </template>
 <script setup>
 import { URL } from '@/composables/url';
-
+const {toUrl} = window;
 
 const NamePattern = /^\w[\w-]*$/;
 const state = reactive({
@@ -77,9 +77,9 @@ function open(row) {
     state.show = true;
 }
 
-const createUrl = URL.to('admin/role/create');
+const createUrl = toUrl.post('admin/role/create');
 function save() {
-    let url = state.name ? URL.to('/admin/role/update', { name: state.name }) : createUrl;
+    let url = state.name ? toUrl.post('/admin/role/update', { name: state.name }) : createUrl;
     axios.post(url, form.data()).then(r => {
         state.show = false;
         URL.reload();

@@ -61,7 +61,6 @@ export default defineConfig(({ command, mode }) => {
         resolve: {
             alias: {
                 '@/': `${path.resolve(__dirname, 'client')}/`,
-                '~/': `${path.resolve(__dirname, 'client')}/`,
             }
         },
         build: {

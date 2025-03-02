@@ -2,6 +2,7 @@
 import { URL } from '@/composables/url';
 import FormDlg from './FormDlg.vue';
 import GrandDlg from './GrandDlg.vue';
+const {toUrl} = window;
 
 const props = defineProps({
     data: Object,
@@ -33,8 +34,8 @@ const types = [
 ];
 function deleteRow(row) {
     confirm('Yakin akan menghapus data ini?').then(() => {
-        axios.post(URL.to('admin/role/delete', { name: row.name })).then(res=>{
-
+        axios.post(toUrl.post('admin/role/delete', { name: row.name })).then(res=>{
+            URL.reload();
         });
     });
 }
@@ -52,7 +53,7 @@ function deleteRow(row) {
             <v-col cols="12">
                 <v-card>
                     <v-toolbar density="default">
-                        <v-btn density="compact" icon="mdi-reload" @click="reloadPage()">
+                        <v-btn density="compact" icon="mdi-reload" @click="URL.reload()">
                         </v-btn>
                         <v-toolbar-title>Role</v-toolbar-title>
                         <v-spacer></v-spacer>

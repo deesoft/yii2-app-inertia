@@ -7,7 +7,7 @@ export default {
         app.component('Link', Link);
         app.component("RouterLink", {
             useLink(props) {
-                const href = props.to.value;
+                const href = props.to.value || props.href;
                 const currentUrl = computed(() => usePage().url);
                 return {
                     route: computed(() => ({ href })),

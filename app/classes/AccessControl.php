@@ -2,10 +2,11 @@
 
 namespace app\classes;
 
-use app\helpers\Access;
+use app\helpers\Route;
 use Yii;
 use yii\base\Action;
 use yii\base\ActionFilter;
+use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\web\User;
@@ -13,15 +14,31 @@ use yii\web\User;
 /**
  * Description of AccessControl
  *
+ * @property array|mixed $assignedMenu
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
 class AccessControl extends ActionFilter
 {
     /**
+     *
+     * @var string[]
+     */
+    public $allowed = [];
+    /**
+     *
+     * @var string|array
+     */
+    public $menus;
+    /**
      * @var User User for check access.
      */
-    private $_user = 'user';
+    private $_user;
+    /**
+     *
+     * @var string[]
+     */
+    private $_assignedRoutes;
 
     /**
      * Get user
@@ -45,13 +62,24 @@ class AccessControl extends ActionFilter
     }
 
     /**
+     *
+     */
+    protected function prepare()
+    {
+        if ($this->_assignedRoutes === null) {
+            $routes = array_keys(Yii::$app->authManager->getPermissionsByUser($this->getUser()->id));
+            $this->_assignedRoutes = array_merge(array_combine($routes, $routes), array_combine($this->allowed, $this->allowed));
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function beforeAction($action)
     {
         $actionId = $action->getUniqueId();
         $user = $this->getUser();
-        if (Access::checkRoute('/' . $actionId, $user)) {
+        if ($this->checkRoute('/' . $actionId)) {
             return true;
         }
         $this->denyAccess($user);
@@ -82,7 +110,7 @@ class AccessControl extends ActionFilter
      */
     protected function isActive($action)
     {
-        return parent::isActive($action) && $this->allowSpecialRoute($action);
+        return parent::isActive($action) && !$this->isSpecialRoute($action);
     }
 
     /**
@@ -90,7 +118,7 @@ class AccessControl extends ActionFilter
      * @param Action $action
      * @return boolean
      */
-    protected function allowSpecialRoute($action)
+    protected function isSpecialRoute($action)
     {
         $user = $this->getUser();
         $allowIds = [Yii::$app->getErrorHandler()->errorAction];
@@ -102,10 +130,99 @@ class AccessControl extends ActionFilter
 
         $uniqueId = $action->getUniqueId();
         $allowIds = array_filter($allowIds);
-        if (count($allowIds) && in_array($uniqueId, $allowIds, true)) {
-            return false;
-        }
+        return count($allowIds) && in_array($uniqueId, $allowIds, true);
+    }
 
-        return true;
+    /**
+     *
+     * @param string $route
+     * @return bool 
+     */
+    public function checkRoute($route)
+    {
+        $this->prepare();
+        $r = $this->normalizeRoute($route);
+
+        if (isset($this->_assignedRoutes['/*'])) {
+            return true;
+        }
+        if (isset($this->_assignedRoutes[$r])) {
+            return true;
+        }
+        while (($pos = strrpos($r, '/')) > 0) {
+            $r = substr($r, 0, $pos);
+            if (isset($this->_assignedRoutes[$r . '/*'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Normalize route
+     * @param  string  $route    Plain route string
+     * @return string            Normalized route string
+     */
+    protected function normalizeRoute($route)
+    {
+        if ($route === '') {
+            return'/' . Yii::$app->controller->getRoute();
+        } elseif (strncmp($route, '/', 1) === 0) {
+            return $route;
+        } elseif (strpos($route, '/') === false) {
+            return '/' . Yii::$app->controller->getUniqueId() . '/' . $route;
+        } elseif (($mid = Yii::$app->controller->module->getUniqueId()) !== '') {
+            return '/' . $mid . '/' . $route;
+        } else {
+            return '/' . $route;
+        }
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getAssignedMenu()
+    {
+        if ($this->menus) {
+            Route::refreshRoute();
+            $allMenu = is_string($this->menus) ? require(Yii::getAlias($this->menus)) : $this->menus;
+            $result = $this->filterMenuRecursive($allMenu);
+            return $result;
+        }
+        return [];
+    }
+
+    /**
+     *
+     * @param array $items
+     * @return array
+     */
+    protected function filterMenuRecursive($items)
+    {
+        $result = [];
+        foreach ($items as $item) {
+            $menu = $item;
+            unset($menu['items']);
+            $allow = false;
+            if (!empty($item['route'])) {
+                $route = '/' . trim($item['route'], '/');
+                $allow = $this->checkRoute($route);
+                $menu['href'] = Url::to([$route]);
+            }
+
+            if (isset($item['items']) && is_array($item['items'])) {
+                $subItems = $this->filterMenuRecursive($item['items']);
+                if (count($subItems)) {
+                    $allow = true;
+                    $menu['items'] = $subItems;
+                }
+            }
+
+            if ($allow) {
+                $result[] = $menu;
+            }
+        }
+        return $result;
     }
 }

@@ -2,17 +2,7 @@
 
 $config = [
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log', function($app){
-        if(file_exists(__DIR__ . '/init.php')){
-            require __DIR__ . '/init.php';
-        }
-        if($app instanceof yii\console\Application && file_exists(__DIR__ . '/init_console.php')){
-            require __DIR__ . '/init_console.php';
-        }
-        if($app instanceof yii\web\Application && file_exists(__DIR__ . '/init_web.php')){
-            require __DIR__ . '/init_web.php';
-        }
-    }],
+    'bootstrap' => ['log'],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'runtimePath' => dirname(dirname(__DIR__)) . '/runtime',
     'aliases' => [
@@ -33,6 +23,14 @@ $config = [
                 ],
             ],
         ],
+        'mailer' => [
+            'class' => \yii\symfonymailer\Mailer::class,
+            'transport' => [
+                'dsn' => env('MAILER_DSN'),
+            ],
+            'viewPath' => '@app/mail',
+            'useFileTransport' => true,
+        ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
             'cache' => 'cache',
@@ -50,6 +48,9 @@ $config = [
             'username' => env('DB_FILE_USERNAME', env('DB_USERNAME')),
             'password' => env('DB_FILE_PASSWORD', env('DB_PASSWORD')),
             'charset' => 'utf8',
+        ],
+        'queue' => [
+            'class' => \yii\queue\sync\Queue::class,
         ],
         'mutex' => [
             'class' => \yii\mutex\PgsqlMutex::class,
