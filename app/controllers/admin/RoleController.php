@@ -77,6 +77,7 @@ class RoleController extends Controller
             ->select(['i.name', 'i.type', 'c.parent'])
             ->leftJoin('auth_item_child c', ['AND', 'c.child=i.name', ['c.parent' => $name]])
             ->orderBy(['i.name' => SORT_ASC])
+            ->andWhere(['<>', 'i.name', $name])
             ->asArray()
             ->all();
         $template = [

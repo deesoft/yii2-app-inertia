@@ -3,7 +3,7 @@
         <v-row dense>
             <v-col cols="12">
                 <p class="text-overline">
-                    <Link href="/" class="text-decoration-none"><v-icon>mdi-home</v-icon></Link> / Dashboard
+                    <Link :href="toUrl.home" class="text-decoration-none"><v-icon>mdi-home</v-icon></Link> / Dashboard
                 </p>
             </v-col>
             <v-col cols="12">
@@ -13,5 +13,5 @@
     </v-container>
 </template>
 <script setup>
-
+const {toUrl} = window;
 </script>

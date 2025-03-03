@@ -1,5 +1,4 @@
 <?php
-
 $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -23,10 +22,16 @@ $config = [
                 ],
             ],
         ],
+        // Looking to send emails in production? Check out our Email API/SMTP product!
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
+            'class' => 'yii\swiftmailer\Mailer',
             'transport' => [
-                'dsn' => env('MAILER_DSN'),
+                'class' => 'Swift_SmtpTransport',
+                'host' => env('MAILER_HOST', 'sandbox.smtp.mailtrap.io') ,
+                'username' => env('MAILER_USERNAME'),
+                'password' =>env('MAILER_PASSWORD'),
+                'port' => env('MAILER_PORT',2525),
+                'encryption' => env('MAILER_ENCRYPTION','tls'),
             ],
             'viewPath' => '@app/mail',
             'useFileTransport' => true,

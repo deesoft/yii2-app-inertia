@@ -49,7 +49,7 @@ class PasswordResetRequest extends Model
 
             if ($user->save()) {
                 $resetLink = Url::to(['/auth/reset-password', 'token' => $user->password_reset_token], true);
-                Yii::$app->queue->push(new EmailResetPassword([
+                return Yii::$app->queue->push(new EmailResetPassword([
                     'resetLink' => $resetLink,
                     'userId' => $user->id,
                 ]));

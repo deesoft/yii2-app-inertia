@@ -9,7 +9,7 @@ $config = [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName' => true,
+            'showScriptName' => false,
             //'enableStrictParsing' => true,
             'rules' => require(__DIR__ . '/routes.php'),
         ],
@@ -27,13 +27,14 @@ $config = [
     'as access' => [
         'class' => app\classes\AccessControl::class,
         'allowed' => [
-            '/*', // remark bagian ini setelah user role tersedia.
+            '*', // remark bagian ini setelah user role tersedia.
+            'site/about'
         ],
         'menus' => __DIR__ . '/menu.php',
         'except' => [
             'file/*',
             'gii/*',
-        //'*', //
+            'auth/*',
         ],
     ],
     'params' => [

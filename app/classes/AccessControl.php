@@ -67,8 +67,11 @@ class AccessControl extends ActionFilter
     protected function prepare()
     {
         if ($this->_assignedRoutes === null) {
-            $routes = array_keys(Yii::$app->authManager->getPermissionsByUser($this->getUser()->id));
-            $this->_assignedRoutes = array_merge(array_combine($routes, $routes), array_combine($this->allowed, $this->allowed));
+            $this->_assignedRoutes = Yii::$app->authManager->getPermissionsByUser($this->getUser()->id);
+            foreach ($this->allowed as $route) {
+                $route = '/' . trim($route, '/');
+                $this->_assignedRoutes[$route] = true;
+            }
         }
     }
 
@@ -208,7 +211,7 @@ class AccessControl extends ActionFilter
             if (!empty($item['route'])) {
                 $route = '/' . trim($item['route'], '/');
                 $allow = $this->checkRoute($route);
-                $menu['href'] = Url::to([$route]);
+                $menu['href'] = Url::to((array) $route);
             }
 
             if (isset($item['items']) && is_array($item['items'])) {

@@ -14,7 +14,7 @@ const state = reactive({
 });
 
 const password_confirm_error = computed(() => {
-    return form.password == state.password_confirm ? '' : 'Password confirm not match';
+    return form.password == state.password_confirm ? null : 'Password confirm not match';
 });
 
 defineOptions({
@@ -29,7 +29,7 @@ defineOptions({
                     <v-card class="align-center" style="min-width:320px">
                         <v-card-text>
                             <Link :href="toUrl.home"><v-img height="40" :src="toUrl.public('icon/icon.jpeg')"></v-img></Link>
-                            <h4 class="text-center text-h6">Ganti Password</h4>
+                            <h4 class="text-center text-h6">Reset Password</h4>
                         </v-card-text>
                         <v-card-text>
                             <form @submit.prevent="form.post($page.url)" class="space-y-6">
@@ -41,7 +41,7 @@ defineOptions({
                                     @input="form.clearErrors('password')">
                                 </v-text-field>
 
-                                <v-text-field v-model="form.password_confirm" required density="compact"
+                                <v-text-field v-model="state.password_confirm" required density="compact"
                                     label="Password Confirmation" :type="state.show_pass_confirm ? 'text' : 'password'"
                                     variant="outlined" autocomplete="on" :error-messages="password_confirm_error"
                                     :append-inner-icon="state.show_pass_confirm ? 'mdi-eye-off' : 'mdi-eye'"

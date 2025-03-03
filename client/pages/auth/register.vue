@@ -62,7 +62,7 @@ defineOptions({
                                     @input="form.clearErrors('password')">
                                 </v-text-field>
 
-                                <v-text-field v-model="form.password_confirm" required density="compact"
+                                <v-text-field v-model="state.password_confirm" required density="compact"
                                     label="Password Confirmation" :type="state.show_pass_confirm ? 'text' : 'password'"
                                     variant="outlined" autocomplete="on" :error-messages="password_confirm_error"
                                     :append-inner-icon="state.show_pass_confirm ? 'mdi-eye-off' : 'mdi-eye'"

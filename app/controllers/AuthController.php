@@ -101,13 +101,13 @@ class AuthController extends Controller
         ]);
     }
 
-    public function actionPasswordResetRequest()
+    public function actionForgotPassword()
     {
         $model = new PasswordResetRequest();
         if ($model->load($this->request->post(), '') && $model->sendEmail()) {
             return $this->redirect(['/site/index']);
         }
-        return Inertia::render('auth/password-reset-request', [
+        return Inertia::render('auth/forgot-password', [
                 'model' => $model,
         ]);
     }
