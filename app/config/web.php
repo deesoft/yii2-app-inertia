@@ -1,7 +1,6 @@
 <?php
 $config = [
     'id' => 'basic',
-    'name' => 'main',
     'controllerNamespace' => 'app\controllers',
     'components' => [
         'request' => [

@@ -1,5 +1,6 @@
 <?php
 $config = [
+    'name' => 'Dee App Inertia',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
