@@ -31,6 +31,6 @@ class SiteController extends Controller
 
     public function actionAbout()
     {
-        return Inertia::render('site/about', $this->request->post());
+        return Inertia::render('site/about');
     }
 }
