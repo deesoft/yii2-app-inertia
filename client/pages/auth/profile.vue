@@ -2,10 +2,10 @@
 import MainLayout from '@/layouts/Main.vue';
 import { auth } from '@/composables/auth';
 import { uploadImage } from '@/composables/global';
-const { toUrl } = window;
+const { yiiUrl } = window;
 
 function uploadProcess(formData) {
-    return axios.post(toUrl.post('/auth/edit-avatar'), formData).then(res => {
+    return axios.post(yiiUrl.post('/auth/edit-avatar'), formData).then(res => {
         auth.avatar = res.data.avatar;
         return res.data;
     });
@@ -26,7 +26,7 @@ defineOptions({
                 <v-col class="d-flex align-center justify-center">
                     <v-card class="pa-6" max-width="400" elevation="6" min-width="350">
                         <v-card-text>
-                            <Link :href="toUrl.home"><v-img height="40" :src="toUrl.public('icon/icon.jpeg')"></v-img></Link>
+                            <Link :href="yiiUrl.home"><v-img height="40" :src="yiiUrl.public('icon/icon.jpeg')"></v-img></Link>
                         </v-card-text>
                         <v-img class="align-end" :src="auth.avatarLink" alt="Avatar" cover>
                             <v-card-title>
@@ -44,7 +44,7 @@ defineOptions({
                                     <v-icon>mdi-email</v-icon>
                                 </template>
                             </v-list-item>
-                            <v-list-item :to="toUrl('auth/change-password')" title="Change Password">
+                            <v-list-item :to="yiiUrl('auth/change-password')" title="Change Password">
                                 <template v-slot:prepend>
                                     <v-icon>mdi-lock</v-icon>
                                 </template>

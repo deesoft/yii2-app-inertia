@@ -48,7 +48,7 @@
 <script setup>
 import { URL } from '@/composables/url';
 
-const { toUrl } = window;
+const { yiiUrl } = window;
 const state = reactive({
     show: false,
     passwordOpen: false,
@@ -84,7 +84,7 @@ function open(row) {
 }
 
 function save() {
-    let url = state.id ? toUrl.post('/admin/user/update', { id: state.id }) : toUrl.post('/admin/user/create');
+    let url = state.id ? yiiUrl.post('/admin/user/update', { id: state.id }) : yiiUrl.post('/admin/user/create');
     axios.post(url, form.data()).then(r => {
         state.show = false;
         URL.reload();

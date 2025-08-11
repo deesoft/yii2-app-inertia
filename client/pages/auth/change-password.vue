@@ -1,6 +1,6 @@
 <script setup>
 import MainLayout from '@/layouts/Main.vue';
-const { toUrl } = window;
+const { yiiUrl } = window;
 const props = defineProps({
     model: Object,
 });
@@ -29,7 +29,7 @@ defineOptions({
                 <v-col class="d-flex align-center justify-center pa-4">
                     <v-card class="align-center" style="min-width:320px">
                         <v-card-text>
-                            <Link :href="toUrl.home"><v-img height="40" :src="toUrl.public('icon/icon.jpeg')"></v-img></Link>
+                            <Link :href="yiiUrl.home"><v-img height="40" :src="yiiUrl.public('icon/icon.jpeg')"></v-img></Link>
                             <h4 class="text-center text-h6">Ganti Password</h4>
                         </v-card-text>
                         <v-card-text>

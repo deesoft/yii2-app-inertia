@@ -1,14 +1,14 @@
 const user = window.user || {};
-const { toUrl } = window;
+const { yiiUrl } = window;
 export const auth = reactive({
     ...user,
     isLoged: computed(() => !!user.id),
     avatarLink: computed(() => {
         if (auth.avatar) {
             const regex = /^[a-z0-9]{1,16}$/;
-            return regex.test(auth.avatar) ? toUrl('/file/view', { id: auth.avatar }) : auth.avatar;
+            return regex.test(auth.avatar) ? yiiUrl('/file/view', { id: auth.avatar }) : auth.avatar;
         } else {
-            return toUrl.public('icon/avatar.png');
+            return yiiUrl.public('icon/avatar.png');
         }
     }),
 });

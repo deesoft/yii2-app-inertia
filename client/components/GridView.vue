@@ -1,14 +1,15 @@
 <script setup>
-import { URL } from '@/composables/url';
+import { URL } from '@/composables/global';
+import Pagination from './Pagination.vue';
+import { computed } from 'vue';
 
 const props = defineProps({
     columns: Array,
-    data: [Object, Array],
+    data: { type: [Object, Array], required: true },
     rowClass: [Function, Array, String],
-    reload: Boolean,
+    reload: { type: Boolean, default: true },
 });
 const items = computed(() => props.data.items ? props.data.items : props.data);
-const meta = computed(() => props.data.meta ? props.data.meta : null);
 const emit = defineEmits(['reload']);
 
 function doReload(param) {
@@ -19,7 +20,7 @@ function doReload(param) {
     }
 }
 const sort = computed(() => {
-    let s = URL.queryParams.sort;
+    let s = URL.params.sort;
     if (s) {
         return s.split(',').map(v => {
             if (v.charAt(0) == '-') {
@@ -32,24 +33,6 @@ const sort = computed(() => {
     return [];
 });
 
-const pageNumber = computed({
-    get() {
-        return meta.value ? meta.value.currentPage : null;
-    },
-    set(val) {
-        doReload({ page: val });
-    }
-});
-
-const pageSize = computed({
-    get() {
-        return meta.value ? meta.value.perPage : null;
-    },
-    set(val) {
-        doReload({ 'per-page': val });
-    }
-});
-
 function calcRowClass(row, i) {
     if (props.rowClass instanceof Function) {
         return props.rowClass(row, i)
@@ -57,7 +40,10 @@ function calcRowClass(row, i) {
     return props.rowClass
 }
 function lineNo(i) {
-    return meta.value ? (pageNumber.value - 1) * pageSize.value + i + 1 : i + 1;
+    if (props.data.meta) {
+        return (props.data.meta.currentPage - 1) * props.data.meta.perPage + i + 1;
+    }
+    return i + 1;
 }
 
 function sorting(key) {
@@ -125,13 +111,7 @@ function isSorted(key) {
                 </tr>
             </tbody>
         </v-table>
-        <v-divider v-if="meta"></v-divider>
-        <v-card-actions class="text-center" v-if="meta">
-            <v-pagination v-model="pageNumber" :length="meta.pageCount" density="compact"
-                :total-visible="7"></v-pagination>
-            <v-spacer></v-spacer>
-            <v-select v-model="pageSize" style="max-width: 100px;" hide-details density="compact"
-                variant="solo" :items="[5, 10, 20, 25, 30, 40, 50, 100, 500]"></v-select>
-        </v-card-actions>
+        <v-divider v-if="data.meta"></v-divider>
+        <Pagination v-if="data.meta" :meta="data.meta" :links="data.links" :reload="reload" @reload="doReload"></Pagination>
     </v-card>
 </template>

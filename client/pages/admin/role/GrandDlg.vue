@@ -46,7 +46,7 @@
     </v-dialog>
 </template>
 <script setup>
-const {toUrl} = window;
+const {yiiUrl} = window;
 
 const state = reactive({
     show: false,
@@ -65,7 +65,7 @@ const right = reactive({
 });
 
 function open(name) {
-    axios.get(toUrl('/admin/role/data', { name })).then(r => {
+    axios.get(yiiUrl('/admin/role/data', { name })).then(r => {
         state.name = name;
         left.search = '';
         left.selected = [];
@@ -80,7 +80,7 @@ function open(name) {
 }
 
 function doSave(action) {
-    let url = toUrl.post(`/admin/role/${action}`, { name: state.name });
+    let url = yiiUrl.post(`/admin/role/${action}`, { name: state.name });
     const items = action == 'assign' ? left.selected : right.selected;
     if (items.length > 0) {
         axios.post(url, { items }).then(r => {

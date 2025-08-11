@@ -1,5 +1,6 @@
 <script setup>
-import {URL} from '@/composables/url';
+import { URL } from '../composables/global';
+import { watch, ref } from 'vue';
 
 const props = defineProps({
     reload: { type: Boolean, default: false },
@@ -7,9 +8,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['search']);
-const q = ref(URL.queryParams.q);
+const q = ref(URL.params.q);
 
-watch(() => URL.queryParams.q, (val) => {
+watch(() => URL.params.q, (val) => {
     q.value = val;
 });
 

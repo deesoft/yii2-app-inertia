@@ -2,7 +2,7 @@
 import { URL } from '@/composables/url';
 import FormDlg from './FormDlg.vue';
 import GrandDlg from './GrandDlg.vue';
-const {toUrl} = window;
+const {yiiUrl} = window;
 
 const props = defineProps({
     data: Object,
@@ -34,7 +34,7 @@ const types = [
 ];
 function deleteRow(row) {
     confirm('Yakin akan menghapus data ini?').then(() => {
-        axios.post(toUrl.post('admin/role/delete', { name: row.name })).then(res=>{
+        axios.post(yiiUrl.post('admin/role/delete', { name: row.name })).then(res=>{
             URL.reload();
         });
     });

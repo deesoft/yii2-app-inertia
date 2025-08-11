@@ -1,8 +1,7 @@
-<template>
-    <v-autocomplete v-model="modelRaw" :items="state.items" :loading="state.loading" :item-value="itemValue"
-        :item-title="itemTitle" return-object @update:search="search" @update:model-value="changed"></v-autocomplete>
-</template>
 <script setup>
+import debounce from "debounce";
+import { reactive, watch } from "vue";
+import axios from 'axios';
 
 const props = defineProps({
     url: { type: String, required: true },
@@ -19,8 +18,8 @@ const state = reactive({
     loading: false,
 });
 
-watch(model, async(val) => {
-    if (props.itemUrl && val && (!modelRaw.value || modelRaw.value[props.itemValue] != val)) {        
+watch(model, async (val) => {
+    if (props.itemUrl && val && (!modelRaw.value || modelRaw.value[props.itemValue] != val)) {
         var res = await axios.get(props.itemUrl, { params: { id: val } });
         modelRaw.value = res.data;
     }
@@ -52,3 +51,7 @@ const search = debounce(async (value) => {
 }, 250);
 
 </script>
+<template>
+    <v-autocomplete v-model="modelRaw" :items="state.items" :loading="state.loading" :item-value="itemValue"
+        :item-title="itemTitle" return-object @update:search="search" @update:model-value="changed"></v-autocomplete>
+</template>

@@ -1,10 +1,7 @@
-<template>
-	<v-snackbar :color="state.color" :timeout="state.timer" v-model="state.show" bottom right class="text-white"
-		style="z-index:99999">
-		<v-icon left>{{ state.icon }}</v-icon> {{ state.message }}
-	</v-snackbar>
-</template>
 <script setup>
+import { reactive } from 'vue';
+import { $bus } from '@/composables/global';
+
 const state = reactive({
 	show: false,
 	message: '',
@@ -25,4 +22,9 @@ function show(data) {
 $bus.on('toast', data => {
 	show(data);
 });
-</script>
+</script><template>
+	<v-snackbar :color="state.color" :timeout="state.timer" v-model="state.show" bottom right class="text-white"
+		style="z-index:99999">
+		<v-icon left>{{ state.icon }}</v-icon> {{ state.message }}
+	</v-snackbar>
+</template>

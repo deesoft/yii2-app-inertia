@@ -1,6 +1,6 @@
 <script setup>
 import MainLayout from '@/layouts/Main.vue';
-const {toUrl} = window;
+const {yiiUrl} = window;
 const props = defineProps({
     model: Object,
 });
@@ -33,9 +33,9 @@ defineOptions({
                 <v-col class="d-flex align-center justify-center">
                     <v-card flat class="align-center" style="min-width:320px">
                         <v-card-text class="text-center">
-                            <Link :href="toUrl.home"><v-img height="40" :src="toUrl.public('icon/icon.jpeg')"></v-img></Link>
+                            <Link :href="yiiUrl.home"><v-img height="40" :src="yiiUrl.public('icon/icon.jpeg')"></v-img></Link>
                             <h1 class="mb-4">Daftar Sekarang</h1>
-                            <p>Sudah punya akun ? <Link :href="toUrl('/site/login')">Masuk</Link></p>
+                            <p>Sudah punya akun ? <Link :href="yiiUrl('/site/login')">Masuk</Link></p>
                         </v-card-text>
                         <v-card-text>
                             <form @submit.prevent="form.submit($page.url)">

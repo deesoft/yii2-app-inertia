@@ -1,6 +1,4 @@
 <?php
-
-use dee\inertia\ViteAsset;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -8,7 +6,6 @@ use yii\web\View;
 /** @var string $content */
 $this->registerCssFile('https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css');
 
-ViteAsset::register($this);
 $user = Yii::$app->user->identity;
 $this->registerJsVar('user', $user ? $user->toArray() : ['id' => null]);
 $this->registerJsVar('menus', Yii::$app->assignedMenu);

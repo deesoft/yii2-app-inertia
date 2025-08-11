@@ -18,7 +18,7 @@ function inpChange(event) {
     if (input.files && input.files.length) {
         var formData = new FormData;
         formData.append('file', input.files[0]);
-        axios.post(toUrl.post('file/upload'), formData).then(res=>{
+        axios.post(yiiUrl.post('file/upload'), formData).then(res=>{
             emit('uploaded', res.data);
         });
     }

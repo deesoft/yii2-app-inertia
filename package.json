@@ -7,32 +7,26 @@
         "dev": "vite",
         "dev-php": "VITE_PHP=1 vite",
         "build": "vite build",
-        "watch": "vite build --watch",
-        "socket": "node nii socket-io"
+        "watch": "vite build --watch"
     },
     "keywords": [],
     "author": "Misbahul D Munir",
     "license": "ISC",
     "dependencies": {
         "@inertiajs/vue3": "^2.0",
-        "@vitejs/plugin-vue": "^4.2.3",
+        "@vitejs/plugin-vue": "^4.0",
         "debounce": "^2.2.0",
         "dotenv": "^16.0.0",
         "maska": "^3.0.4",
+        "moment": "^2.30.1",
         "numeral": "^2.0.6",
-        "pg": "^8.11.2",
         "qs": "^6.11.2",
         "sass": "^1.64.2",
-        "socket.io": "^4.7.2",
-        "socket.io-client": "^4.7.2",
         "unplugin-auto-import": "^0.17.2",
         "unplugin-vue-components": "^0.26.0",
-        "vite": "^5.0.5",
+        "vite": "^5.0",
         "vue": "^3.5",
         "vue-cropperjs": "^5.0.0",
         "vuetify": "^3.7.0"
-    },
-    "devDependencies": {
-        "cheerio": "^1.0.0"
     }
 }

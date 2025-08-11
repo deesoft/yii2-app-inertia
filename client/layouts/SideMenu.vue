@@ -1,3 +1,8 @@
+<script setup>
+const props = defineProps({
+    menus:Array
+});
+</script>
 <template>
     <v-list nav>
         <template v-for="(item, i) in menus" :key="i">
@@ -14,7 +19,3 @@
         </template>
     </v-list>
 </template>
-
-<script setup>
-const menus = window.menus;
-</script>

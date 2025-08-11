@@ -1,3 +1,8 @@
+import { stringify } from "qs";
+import { router, usePage } from "@inertiajs/vue3";
+import { reactive, computed, ref, onMounted, onUnmounted } from "vue";
+const { yiiUrl } = window;
+
 const STORAGE_KEY = '__theme';
 const theme = ref(localStorage.getItem(STORAGE_KEY));
 
@@ -10,60 +15,60 @@ export const darkMode = computed({
         localStorage.setItem(STORAGE_KEY, theme.value);
     }
 });
-const dialogMethods = reactive({
-    confirm: null,
-    uploadImage: null,
-    uploadFile: null,
+
+if (typeof window.stringify === 'undefined') {
+    window.stringify = stringify;
+}
+
+export const URL = reactive({
+    current: computed(() => usePage().url),
+    route: computed(() => usePage().props.$r[0]),
+    params: computed(() => usePage().props.$r[1]),
+    /**
+     * 
+     * @param {object} params 
+     * @param {object} options 
+     */
+    reload(params, options) {
+        let url = yiiUrl(this.route, { ...this.params, ...(params || {}) });
+        return router.get(url, {}, options || {});
+    },
 });
 
-export function applyDialog(name, method) {
-    switch (name) {
-        case 'confirm':
-            dialogMethods.confirm = method;
-            break;
-        case 'uploadImage':
-            dialogMethods.uploadImage = method;
-            break;
-            case 'uploadFile':
-                dialogMethods.uploadFile = method;
-                break;
-    }
-}
-
-export function confirm(message, callbackTrue, callbackFalse) {
-    if (dialogMethods.confirm) {
-        return dialogMethods.confirm(message, callbackTrue, callbackFalse);
+class Bus {
+    constructor() {
+        this.events = {};
     }
 
-    return new Promise((resolve, reject) => {
-        if (window.confirm(message)) {
-            if (callbackTrue) {
-                callbackTrue();
+    /**
+     * Register event
+     * @param {string} name 
+     * @param {Function} fn 
+     */
+    on(name, fn) {
+        const events = this.events;
+        onMounted(() => {
+            events[name] = events[name] || [];
+            events[name].push(fn);
+        });
+        onUnmounted(() => {
+            if (events[name]) {
+                events[name] = events[name].filter(f => f !== fn);
             }
-            resolve(true);
-        } else {
-            if (callbackFalse) {
-                callbackFalse();
-            }
-            reject(false);
+        });
+    }
+
+    /**
+     * Trigger event
+     * @param {string} name 
+     */
+    emit(name) {
+        const args = arguments.slice(1);
+        var th = this;
+        if (this.events[name]) {
+            this.events[name].forEach((fn) => fn.apply(th, args));
         }
-    });
+    }
 }
 
-export function uploadImage(options) {
-    if (dialogMethods.uploadImage) {
-        return dialogMethods.uploadImage(options);
-    }
-    return new Promise((resolve) => {
-        resolve(false);
-    });
-}
-
-export function uploadFile(options) {
-    if (dialogMethods.uploadFile) {
-        return dialogMethods.uploadFile(options);
-    }
-    return new Promise((resolve) => {
-        resolve(false);
-    });
-}
+export const $bus = new Bus();

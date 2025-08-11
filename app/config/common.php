@@ -72,7 +72,7 @@ if (YII_IS_LOCAL) {
         'class' => 'yii\gii\Module',
         'generators' => [
             'inertia' => [
-                'class' => 'dee\gii\generators\inertia\Generator',
+                'class' => 'dee\inertia\gii\Generator',
                 'modelNsSearch' => [
                     'app\models'
                 ]

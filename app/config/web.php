@@ -39,7 +39,7 @@ $config = [
     'params' => [
         'inertia' => [
             'encript_history' => true,
-            'viewFile' => '@app/views/app.php',
+            'view_file' => '@app/views/app.php',
         ]
     ]
 ];

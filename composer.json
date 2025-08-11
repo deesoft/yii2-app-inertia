@@ -43,6 +43,20 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "path",
+            "url": "../yii2-inertia",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../yii2-gii",
+            "options": {
+                "symlink": true
+            }
         }
     ]
 }

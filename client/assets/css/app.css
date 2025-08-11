@@ -80,35 +80,3 @@ table th.action{
      background-position-x: -200%;
    }
 }
-
-@media screen and (max-width: 600px) {
-   /* Track 
-
-   ::-webkit-scrollbar {
-       width: 0px;
-       height: 0px;
-   }
-
-   ::-webkit-scrollbar-track {
-       border-radius: 1px;
-       background: #FFFFAA;
-   }
-
-   /* Handle 
-
-   ::-webkit-scrollbar-thumb {
-       background: #0EE363;
-       border-radius: 1px;
-   }
-
-
-   /* Handle on hover 
-
-   ::-webkit-scrollbar-thumb:hover {
-       background: #cccccc;
-       width: 2px;
-       height: 2px;
-   }   
-   */ 
-}
-

@@ -1,10 +1,11 @@
-import vuetify from '@/plugins/vuetify';
-import mainPlugin from '@/plugins/main';
-import DefaultLayout from '@/layouts/Default.vue';
+import vuetify from './plugins/vuetify';
+import mainPlugin from './plugins/main';
+import DefaultLayout from './layouts/Default.vue';
 import { createInertiaApp } from '@inertiajs/vue3';
+import { createApp, h } from 'vue'
 
 import 'vuetify/lib/styles/main.sass';
-import '@/assets/css/app.css';
+import './assets/css/app.css';
 
 function setDefaultLayout(page) {
     if (page.default && typeof page.default.layout === 'undefined') {
@@ -12,7 +13,6 @@ function setDefaultLayout(page) {
     }
     return page;
 }
-
 
 const pages = import.meta.glob('./pages/**/*.vue', { eager: true });
 function resolvePageComponent(name) {
@@ -28,6 +28,7 @@ function resolvePageComponent(name) {
     }
 }
 createInertiaApp({
+    id:'app',
     resolve: resolvePageComponent,
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
