@@ -1,7 +1,5 @@
 import { stringify } from "qs";
-import { router, usePage } from "@inertiajs/vue3";
-import { reactive, computed, ref, onMounted, onUnmounted } from "vue";
-const { yiiUrl } = window;
+import { computed, ref, onMounted, onUnmounted } from "vue";
 
 const STORAGE_KEY = '__theme';
 const theme = ref(localStorage.getItem(STORAGE_KEY));
@@ -19,21 +17,6 @@ export const darkMode = computed({
 if (typeof window.stringify === 'undefined') {
     window.stringify = stringify;
 }
-
-export const URL = reactive({
-    current: computed(() => usePage().url),
-    route: computed(() => usePage().props.$r[0]),
-    params: computed(() => usePage().props.$r[1]),
-    /**
-     * 
-     * @param {object} params 
-     * @param {object} options 
-     */
-    reload(params, options) {
-        let url = yiiUrl(this.route, { ...this.params, ...(params || {}) });
-        return router.get(url, {}, options || {});
-    },
-});
 
 class Bus {
     constructor() {

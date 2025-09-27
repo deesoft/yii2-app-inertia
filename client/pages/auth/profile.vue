@@ -1,7 +1,7 @@
 <script setup>
 import MainLayout from '@/layouts/Main.vue';
 import { auth } from '@/composables/auth';
-import { uploadImage } from '@/composables/global';
+//import { uploadImage } from '@/composables/global';
 const { yiiUrl } = window;
 
 function uploadProcess(formData) {

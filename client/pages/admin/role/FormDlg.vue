@@ -33,7 +33,8 @@
     </v-dialog>
 </template>
 <script setup>
-import { URL } from '@/composables/url';
+import { router, useForm } from "@inertiajs/vue3";
+import {reactive} from 'vue';
 const {yiiUrl} = window;
 
 const NamePattern = /^\w[\w-]*$/;
@@ -82,7 +83,7 @@ function save() {
     let url = state.name ? yiiUrl.post('/admin/role/update', { name: state.name }) : createUrl;
     axios.post(url, form.data()).then(r => {
         state.show = false;
-        URL.reload();
+        router.reload();
     }).catch(error => {
         form.setError(error.response.data);
     });

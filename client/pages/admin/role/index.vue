@@ -2,7 +2,7 @@
 import { URL } from '@/composables/url';
 import FormDlg from './FormDlg.vue';
 import GrandDlg from './GrandDlg.vue';
-const {yiiUrl} = window;
+const { yiiUrl, confirm } = window;
 
 const props = defineProps({
     data: Object,
@@ -21,7 +21,7 @@ const formDlg = useTemplateRef('formDlg');
 
 const type = computed({
     get() {
-        return URL.queryParams.type;
+        return URL.params.type;
     },
     set(v) {
         URL.reload({ type: v }, { preserveScroll: true, preserveState: true });
@@ -33,11 +33,11 @@ const types = [
     { value: '2', title: 'Permission' },
 ];
 function deleteRow(row) {
-    confirm('Yakin akan menghapus data ini?').then(() => {
-        axios.post(yiiUrl.post('admin/role/delete', { name: row.name })).then(res=>{
+    if (confirm('Yakin akan menghapus data ini?')) {
+        axios.post(yiiUrl.post('admin/role/delete', { name: row.name })).then(res => {
             URL.reload();
         });
-    });
+    };
 }
 
 </script>
@@ -68,9 +68,10 @@ function deleteRow(row) {
                     <GridView :data="data" :columns="columns" reload>
                         <template #d-no="row">{{ row._no }}</template>
                         <template #d-type="row">{{ row.type == 1 ? 'Role' : 'Permission' }}</template>
-                        <template #d-action="row">                            
-                            <v-btn density="compact" size="small" icon="mdi-pencil" @click="formDlg.open(row)"></v-btn>                            
-                            <v-btn density="compact" size="small" icon="mdi-cog" @click="grandDlg.open(row.name)"></v-btn>
+                        <template #d-action="row">
+                            <v-btn density="compact" size="small" icon="mdi-pencil" @click="formDlg.open(row)"></v-btn>
+                            <v-btn density="compact" size="small" icon="mdi-cog"
+                                @click="grandDlg.open(row.name)"></v-btn>
                             <v-btn density="compact" size="small" icon="mdi-delete" @click="deleteRow(row)"></v-btn>
                         </template>
                     </GridView>

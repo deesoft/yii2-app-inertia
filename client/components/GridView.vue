@@ -1,5 +1,5 @@
 <script setup>
-import { URL } from '@/composables/global';
+import { URL } from '@/composables/url';
 import Pagination from './Pagination.vue';
 import { computed } from 'vue';
 
@@ -104,7 +104,7 @@ function isSorted(key) {
                 </tr>
                 <tr v-for="(row, i) in items" :key="i" :class="calcRowClass(row, i)">
                     <td valign="top" v-for="(column, idx) in columns" :key="idx" :class="column.dataClass">
-                        <slot :name="'d-' + column.field" v-bind="row" v-bind:_line="i" v-bind:_no="lineNo(i)">
+                        <slot :name="'d-' + column.field" v-bind="{...row,$index:i,$no:lineNo(i)}">
                             {{ row[column.field] }}
                         </slot>
                     </td>

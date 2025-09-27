@@ -9,6 +9,10 @@ foreach ($tables as $tableName) {
     $tableSchema = $db->getTableSchema($tableName);
     if ($tableSchema && $tableSchema->sequenceName) {
         $this->stdout("Reset sequence {$tableName}...\n");
-        $command->resetSequence($tableName)->execute();
+        try {
+            $command->resetSequence($tableName)->execute();
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
     }
 }

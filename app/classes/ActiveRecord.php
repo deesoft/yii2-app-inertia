@@ -7,7 +7,6 @@ use app\models\AutoNumber;
 use Yii;
 use yii\db\ActiveRecord as BaseActiveRecord;
 use yii\web\Request;
-use yii\web\User;
 
 /**
  * Description of ActiveRecord
@@ -68,7 +67,7 @@ class ActiveRecord extends BaseActiveRecord
             return;
         }
         $pkey = $this->primaryKey;
-        $info = Yii::$container->invoke([$this, 'getAuditTrailBaseInfo']);
+        $info = $this->getAuditTrailBaseInfo();
         $values = [
             'table' => static::tableName(),
             'action' => $insert ? 'insert' : 'update',
@@ -98,7 +97,7 @@ class ActiveRecord extends BaseActiveRecord
         $before = $this->attributes;
         unset($before['created_at'], $before['created_by'], $before['updated_at'], $before['updated_by']);
         $pkey = $this->primaryKey;
-        $info = Yii::$container->invoke([$this, 'getAuditTrailBaseInfo']);
+        $info = $this->getAuditTrailBaseInfo();
         $values = [
             'table' => static::tableName(),
             'action' => 'delete',
@@ -138,10 +137,13 @@ class ActiveRecord extends BaseActiveRecord
             ->all();
     }
 
-    public function getAuditTrailBaseInfo(User $user = null, Request $request = null)
+    public function getAuditTrailBaseInfo()
     {
-        $user_id = $this->audit_trail_user ?: ($user ? $user->id : null);
-        $note = $this->audit_trail_note ?: ($request ? $request->post('audit_trail_note', null) : null);
+        $user_id = $this->audit_trail_user ?: (Yii::$app->has('user') ? Yii::$app->user->id : null);
+        $note = $this->audit_trail_note;
+        if(!$note && Yii::$app->request instanceof Request){
+            $note = Yii::$app->request->post('audit_trail_note');
+        }
         return [
             'user_id' => $user_id,
             'note' => $note,

@@ -46,8 +46,8 @@
     </v-dialog>
 </template>
 <script setup>
-import { URL } from '@/composables/url';
-
+import { router, useForm } from "@inertiajs/vue3";
+import {reactive} from 'vue';
 const { yiiUrl } = window;
 const state = reactive({
     show: false,
@@ -83,11 +83,12 @@ function open(row) {
     state.show = true;
 }
 
+const createUrl = yiiUrl.post('/admin/user/create');
 function save() {
-    let url = state.id ? yiiUrl.post('/admin/user/update', { id: state.id }) : yiiUrl.post('/admin/user/create');
+    let url = state.id ? yiiUrl.post('/admin/user/update', { id: state.id }) : createUrl;
     axios.post(url, form.data()).then(r => {
         state.show = false;
-        URL.reload();
+        router.reload();
     }).catch(error => {
         form.setError(error.response.data);
     });

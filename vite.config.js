@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import dotenv from 'dotenv';
+import yiiInertia from './vendor/deesoft/yii2-inertia';
 
 export default defineConfig(() => {
     dotenv.config({ path: __dirname + '/.env' });
@@ -13,6 +14,15 @@ export default defineConfig(() => {
     return {
         plugins: [
             vue(),
+            yiiInertia({
+                pages:'client/pages',
+                layouts:{
+                    default: 'client/layouts/Default.vue',
+                    main: 'client/layouts/Main.vue'
+                },
+                //output:'client/resolve.js',
+                eager:true,
+            }),
             AutoImport({
                 imports: [
                     'vue',
@@ -54,7 +64,7 @@ export default defineConfig(() => {
         build: {
             rollupOptions: {
                 input: [
-                    './client/app.js',
+                    'client/app.js',
                 ],
             },
             manifest: true,

@@ -1,5 +1,5 @@
 <script setup>
-import { URL } from '@/composables/global';
+import { URL } from '@/composables/url';
 import { computed } from 'vue';
 
 const props = defineProps({

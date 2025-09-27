@@ -1,5 +1,5 @@
 <script setup>
-import { URL } from '../composables/global';
+import { URL } from '../composables/url';
 import { watch, ref } from 'vue';
 
 const props = defineProps({
