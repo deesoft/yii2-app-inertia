@@ -7,12 +7,11 @@ function loadEnv($path)
     if (!is_file($file) && is_file(rtrim($path, '/') . '/.env')) {
         $file = rtrim($path, '/') . '/.env';
     }
-    $lines = trim(file_get_contents($file));
+    $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     if (!$lines) {
         return;
     }
-    $rows = preg_split('/\r\n|\r|\n/', $lines);
-    foreach ($rows as $row) {
+    foreach ($lines as $row) {
         $row = trim($row);
         if (empty($row) || preg_match('/^(#|;)/', $row)) {
             continue;
@@ -41,6 +40,7 @@ function loadEnv($path)
             $temp[$key] = $value;
         }
         $_ENV[$key] = $temp[$key];
+        putenv(sprintf('%s=%s', $key, $temp[$key]));
     }
 }
 

@@ -7,5 +7,6 @@ return [
     'setExecutable' => [
         'yii',
         'nii',
+        'serve',
     ],
 ];

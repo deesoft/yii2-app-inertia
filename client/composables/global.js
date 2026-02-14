@@ -55,3 +55,18 @@ class Bus {
 }
 
 export const $bus = new Bus();
+
+/**
+ * 
+ * @param {string} message 
+ * @returns {Promise}
+ */
+export function confirm(message){
+    return new Promise((resolve, reject)=>{
+        if(window.confirm(message)){
+            resolve(true);
+        }else{
+            reject(false);
+        }
+    });
+}

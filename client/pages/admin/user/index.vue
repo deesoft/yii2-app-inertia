@@ -1,8 +1,9 @@
 <script setup>
 import { URL } from '@/composables/url';
+import { confirm } from '@/composables/global';
 import FormDlg from './FormDlg.vue';
 import GrandDlg from './GrandDlg.vue';
-const { yiiUrl, confirm } = window;
+const { yiiUrl } = window;
 
 const props = defineProps({
     data: Object,
@@ -23,9 +24,9 @@ const columns = [
 ];
 
 function deleteRow(row) {
-    if(confirm('Yakin akan menghapus data ini?')) {
+    confirm('Yakin akan menghapus data ini?').then(() => {
         axios.post(yiiUrl.post('/admin/user/delete', { id: row.id })).then(() => URL.reload());
-    };
+    });
 }
 
 const formDlg = useTemplateRef('formDlg');
@@ -55,8 +56,8 @@ const grandDlg = useTemplateRef('grandDlg');
                     </v-toolbar>
                     <v-divider />
                     <GridView :data="data" :columns="columns" reload>
-                        <template #d-no="row">{{ row._no }}</template>
-                        <template #d-action="row">
+                        <template #d-no="{line}">{{ line }}</template>
+                        <template #d-action="{row}">
                             <v-btn density="compact" size="small" icon="mdi-pencil" @click="formDlg.open(row)"></v-btn>
                             <v-btn density="compact" size="small" icon="mdi-cog" @click="grandDlg.open(row)"></v-btn>
                             <v-btn density="compact" size="small" icon="mdi-delete" @click="deleteRow(row)"></v-btn>

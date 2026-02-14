@@ -2,10 +2,13 @@
 import debounce from "debounce";
 import { reactive, watch } from "vue";
 import axios from 'axios';
+const { yiiUrl } = window;
 
 const props = defineProps({
-    url: { type: String, required: true },
-    itemUrl: { type: String },
+    route: { type: String, required: true },
+    params: { type: Object },
+    itemRoute: { type: String },
+    itemParams: { type: Object },
     itemTitle: { type: String, default: 'name' },
     itemValue: { type: String, default: 'id' },
 });
@@ -18,10 +21,13 @@ const state = reactive({
     loading: false,
 });
 
-watch(model, async (val) => {
-    if (props.itemUrl && val && (!modelRaw.value || modelRaw.value[props.itemValue] != val)) {
-        var res = await axios.get(props.itemUrl, { params: { id: val } });
-        modelRaw.value = res.data;
+watch(model, (val) => {
+    if (val && (!modelRaw.value || modelRaw.value[props.itemValue] != val)) {
+        const route = props.itemRoute || props.route;
+        const params = {...((props.itemRoute ? props.itemParams : props.params) || {}), [props.itemValue]: val};
+        axios.get(yiiUrl(route, params)).then(res => {
+            modelRaw.value = Array.isArray(res.data) ? res.data[0] : res.data;
+        });
     }
 });
 
@@ -34,7 +40,7 @@ function doSearch(value) {
     return new Promise((resolve, reject) => {
         if (!state.loading) {
             state.loading = true;
-            axios.get(props.url, { params: { q: value } }).then(res => {
+            axios.get(yiiUrl(props.route, {...(props.params || {}), q: value})).then(res => {
                 state.items = res.data;
                 state.loading = false;
                 resolve(true);

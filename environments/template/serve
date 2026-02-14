@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+
+$services = [
+    ['localhost:8080', 'web'],
+];
+$viteCommand = 'npm run dev';
+/**
+ *
+ * @param string $cmd
+ * @param string $title
+ * @return mixed
+ */
+function runCommand($cmd, $title)
+{
+    echo "▶️ Run: $title ($cmd)\n";
+    $descriptor_spec = [
+        0 => STDIN,
+        1 => STDOUT,
+        2 => STDERR
+    ];
+    $process = proc_open($cmd, $descriptor_spec, $pipes);
+    if (is_resource($process)) {
+        return $process;
+    } else {
+        echo "\nSome errors occurred while execute '$cmd'\n";
+        return null;
+    }
+}
+
+foreach ($services as $service) {
+    list($address, $root) = $service;
+    $cmd = PHP_BINARY . " -S $address -t $root";
+    runCommand($cmd, "PHP Service");
+}
+runCommand($viteCommand, "Vite Dev Server");
+while (true) {
+    sleep(1);
+}
